@@ -1,0 +1,143 @@
+[ADDS scripts]
+[get-windowsfeature ad-domain-services]
+-	to confirm if Active Directory is installed.
+
+[install-windowsfeature ad-domain-services -IncludeAllSubfeature -IncludeManagementTools]
+-	Installing Active Directory Domain Services (Installed but not yet configured)
+
+[install-ADDSForest -DomainName "example.ca" -InstallDns]
+-	To configure Active Directory
+
+[import-module activedirectory]
+-	to have access to the active directory
+
+[get-adforest]
+-	to confirm Active Directory is configured
+
+[get-ADDomain]
+-	to retrieve information about an Active Directory domain.
+
+[DHCP Scripts]
+[install-windowsfeature DHCP -IncludeAllSubfeature -IncludeManagementTools]
+-	to install DHCP
+
+[Get-WindowsFeature DHCP]
+-	to confirm if DHCP is being installed
+
+[Get-DhcpServerAuditLog]
+-	to retrieve information if you have any Audit
+
+[Add-DHCPServerIndc -DnsName iatek.ca -IPAddress 192.168.1.200]
+-	to force the DHCP Server to assign an IP Address in an Active Directory belonging to  “iatek.ca”
+-	this is to configure DHCP Server
+
+[Get-DHCPServerInDC]
+-	to confirm if the feature is functioning
+[Get-DhcpServerv4Scope]
+-	to confirm IP addresses that are active over the network.
+
+[Get-DhcpServerv4ExclusionRange]
+-	to get information on the range of IP addresses excluded in distributing DHCP IP.
+
+[Get-command Add-DhcpServerInDC -Syntax]
+-	to provide/get command syntax for “DhcpServerInDC”
+
+[Add-DhcpServerv4Scope -Name "VLAN1" -StartRange 192.168.1.1 -EndRange 192.168.1.254 -SubnetMask 255.255.255.0 -State Active]
+-	used to create a new IPv4 DHCP scope on a Windows DHCP server
+
+[Add-DhcpServerv4ExclusionRange -ScopeID 192.168.1.0 -StartRange 192.168.1.1 -EndRange 192.168.1.15]
+-	to exclude 192.168.1.1 – 192.168.1.15 for distributing automatic IP in the network 192.168.1.0
+
+[Get-DhcpServerv4Lease]
+-	to provide details about active DHCP leases that have been assigned to clients.
+
+[WDS Scripts]
+[Get-WindowsFeature wds]
+-	to confirm if “WDS” has been installed
+
+[Install-WindowsFeature wds -IncludeAllSubFeature -IncludeManagementTools]
+-	to install WDS
+
+[Install-WindowsFeature wds-deployment -IncludeManagementTools]
+-	to install WDS deployment server feature
+
+[$wdsUtilResults = wdsutil /initialize-server /remInst:"C:\RemoteInstall"]
+-	to initialize WDS Server
+
+[$wdsUtilResults | select -last 1]
+-	to select the last item from the selection represented by the variable
+[Import-WdsBootImage -Path "D:\sources\boot.wim" -newimagename "Win10"]
+-	to import a boot image into the WDS Server and is set to a new name “Win10”
+[Restart-Service WDSServer]
+-	to restart WDS Server
+
+[New-WdsInstallImageGroup -Name "Win10"]
+-	to create a new install image group in WDS
+
+[Get-WindowsImage -imagePath "D:\sources\install.wim" | select Imagename]
+-	to retrieve information about Windows images located in the path provided
+
+[$imageName = 'Windows 10 Enterprise Evaluation']
+-	to assign the String “Windows 10 Enterprise Evaluation” to the variable name “$imagename”
+
+[Import-WdsInstallImage -Imagegroup "Win10" -Path "D:\sources\install.wim" -Imagename $imageName]
+-	to import a Windows install image into the specified image group
+
+[hyper-v Scripts]
+[Install-WindowsFeature hyper-v -IncludeAllSubFeature -IncludeManagementTools]
+-	to install a hyper-v feature along with all its sub-features and management tools
+[get-vm]
+-	to display all VMWare
+[get-vm -Name "Win10"]
+-	to retrieve information on a specified name of a virtual machine
+[Stop-VM -Name "Win10"]
+-	to stop/turn off a virtual machine
+[Remove-VM -Name "Win10"]
+-	to delete a virtual machine from the specified name
+
+
+[Users and Computers Scripts]
+[New-ADOrganizationalUnit -Name "Example" -ProtectedFromAccidentalDeletion $False]
+-	create a new organization unit
+
+[New-ADOrganizationalUnit -Name "Example" -ProtectedFromAccidentalDeletion $True]
+-	cannot be deleted if it is true
+
+[Set-ADOrganizationalUnit -Identity "Ou=Centennial,DC=iatek,DC=ca" -ProtectedFromAccidentalDeletion $False]
+-	if want to change “Protect accidental deletion” into true
+
+[Get-ADOrganizationalUnit -Filter 'Name -like "Example"']
+-	To confirm "Example” Organizational unit has been created
+
+[Get-ADOrganizationalUnit -Filter 'Name -like "*"']
+-	All Active Directory Organizational Unit will appear
+
+[Remove-ADOrganizationalUnit -Identity "Ou=Centennial,DC=iatek,DC=ca" -Recursive]
+-	To remove the Active Directory Organizational Unit
+
+[New-ADUser -Name "FirstName LastName" -GivenName  "FirstName" -Surname "LastName" -SamAccountName "bomber" -UserPrincipalName "bomber" -DisplayName "Batman" -Path "OU=Centennial,DC=bomber,DC=ca" -Accountpassword (Read-Host -AsSecureString "input password" ) -PasswordNeverExpires $True -enable $true]
+-	to create Users in an Organizational Unit
+
+[New-ADGroup -Name "AMG" -Path "OU=Centennial,DC=iatek,DC=ca" -GroupCategory Security -GroupScope Global]
+-	for creating an active directory group
+
+[Get-ADGroup -Filter * -SearchBase "OU=Centennial,DC=iatek,DC=ca"]
+-	for searching AD groups
+
+[Get-ADGroup -Identity "AMG"]
+-	to just search for one specific group which is “AMG”
+
+
+[Get-ADUser -Filter * -SearchBase "OU=Centennial,DC=iatek,DC=ca"]
+-	for searching AD Users
+
+[Get-command New-ADUser -Syntax]
+-	to get command syntax for ADUser
+
+[Add-ADGroupMember -Identity "GroupName" -Members "UserName"]
+-	to add a User to the group
+
+[New-SmbShare -Name "Test" -path "C:\Users\Administrator\Desktop\Test" -FullAccess "iatek\Administrator"]
+-	to share the folder "Test" to Admin iatek with Full access.
+
+end
